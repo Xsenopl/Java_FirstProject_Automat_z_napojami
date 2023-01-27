@@ -1,3 +1,5 @@
+//import jdk.incubator.vector.VectorOperators;
+
 import java.sql.*;
 import java.util.Scanner;
 import java.util.InputMismatchException;
@@ -11,12 +13,10 @@ public class Main {
         cAutomatZNapojami automatZNapojami = new cAutomatZNapojami();
         cAutomatController controller1 = new cAutomatController(automatZNapojami);
 
-        System.out.println("Hello world!");
+        System.out.println("Automat z napojami");
 
 
-
-
-
+  //      VectorOperators.Conversion<Integer, String>()
 
 
 

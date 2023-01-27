@@ -1,6 +1,6 @@
 import java.sql.*;
 
-public class JDBsql {
+public class JDBsql implements JDBsqlInterface{
     final protected String url="jdbc:mysql://127.0.0.1/automatznapojamijava";
     final protected String password="";
     final protected String username="root";
@@ -20,33 +20,24 @@ public class JDBsql {
             //Wyrzuć wyjątki jeśli zostaną wychwycone błędy związane z logowaniem do bazy i kwerendą
             System.out.println("Wyj 2: "+e);
         }
-
-/*        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet= statement.executeQuery("select * from napoje where nr_na_liście is not null");
-
-            //       while(resultSet.next())
-            //           System.out.println(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+resultSet.getDouble(3)+" "+resultSet.getInt(4));
-
-   //         napoje = przeniesienieZBazyDoTablicy(resultSet);
-            System.out.println("Wykonano przeniesienie");
-
-        }catch(SQLException e){
-            System.out.println("Wyj 3: "+e);
-        }
-
-        //       this.pokazTowar();
-
-
-*/
-
         assert connection != null;
         zamknijBaze(connection);
-
-
     }
 
-
+    protected void pokazBaze(){
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("select * from napoje1");
+            System.out.println("id,\tnr_na_Liście,  nazwa  cena  ilość");
+            while (rs.next()) {
+                System.out.println(rs.getInt(1) + "  \t\t" + rs.getString(2) + " ----- " + rs.getString(3) + " \t" + rs.getDouble(4) + "zł  ," + rs.getInt(5));
+            }
+        }catch(SQLException e){
+            System.out.println("Wyj (pokazanieBazy): " + e);
+        }
+        zamknijBaze(connection);
+    }
 
     private void zamknijBaze(Connection con){
         try {
@@ -61,18 +52,94 @@ public class JDBsql {
         try {
             connection = DriverManager.getConnection(url, username, password);
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from napoje where nr_na_liście is not null");
+            ResultSet rs = statement.executeQuery("select * from napoje1 where nr_na_liście is not null");
             while (rs.next()) {
-                int nr = rs.getInt(1);
+                //System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+sr.getDouble(3)+" "+sr.getInt(4));
+                int nr = rs.getInt(2);
                 if(nr<l)
-                    tabtym[nr] = new cNapoj(nr, rs.getString(2),rs.getDouble(3),rs.getInt(4));
+                    tabtym[nr] = new cNapoj(nr, rs.getString(3),rs.getDouble(4),rs.getInt(5));
             }
         }catch(SQLException e){
-            System.out.println("Wyj (przeniesienie): " + e);
+            System.out.println("Wyj (przeniesienieZ): " + e);
+        }
+        zamknijBaze(connection);
+        return tabtym;
+    }
+
+
+ /*   public void przeniesienieZTablicyDoBazy(cNapoj[] nap){   /// NIEZROBIONE
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement prepStmt = connection.prepareStatement("Update napoje set ilosc WHERE id= ? ;");
+
+
+            for(int i = 0; i<nap.length; i++){
+
+
+
+
+            }
+        }catch (SQLException e){
+            System.out.println("Wyj (przeniesienieDo): " + e);
+        }
+    }
+    public void przeniesienieZTabDoBazy(cNapoj nap){
+
+    }
+*/
+    public void zmienIlosc1(cNapoj nap){
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement prepStmt = connection.prepareStatement("Update napoje1 set ilosc = ? WHERE nr_na_liście = ? ;");
+            prepStmt.setInt(1, nap.getIlosc());
+            prepStmt.setInt(2, nap.getNr_na_liscie());
+            prepStmt.execute();
+        }catch (SQLException e){
+            System.out.println("Wyj (przeniesienieDo): " + e);
+        }
+        zamknijBaze(connection);
+    }
+    public void usunZListyB(cNapoj nap){
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement prepStmt = connection.prepareStatement("Update napoje1 set nr_na_liście = null WHERE nr_na_liście = ? ;");
+            prepStmt.setInt(1, nap.getNr_na_liscie());
+            prepStmt.execute();
+        }catch (SQLException e){
+            System.out.println("Wyj (usunięcieZListy): " + e);
+        }
+        zamknijBaze(connection);
+    }
+    public void usunZBazy(int id){
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement prepStmt = connection.prepareStatement("Delete from napoje1 where id = ? ;");
+            prepStmt.setInt(1, id);
+            prepStmt.execute();
+        }catch (SQLException e){
+            System.out.println("Wyj (usunięcieZ): " + e);
         }
         zamknijBaze(connection);
 
-
-        return tabtym;
     }
+
+    //Zwraca null kiedy: nie można znaleźć obiektu po id; nr_na_liście jest null'em
+    public Integer getNrPoId(int id){
+        Integer nr = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("select nr_na_liście from napoje1 where id = "+id);
+            if (rs.next()) {
+               // System.out.println("\n---Widzi i robi---\n");
+                if (rs.getString(1) != null) {nr = rs.getInt(1);}
+                  //  System.out.println(nr);}
+            }
+        }catch (SQLException e){
+            System.out.println("Wyj (gerNrPoId): " + e);
+        }
+        zamknijBaze(connection);
+        return nr;
+    }
+
 }

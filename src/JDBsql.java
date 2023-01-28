@@ -24,7 +24,7 @@ public class JDBsql implements JDBsqlInterface{
         zamknijBaze(connection);
     }
 
-    protected void pokazBaze(){
+    public void pokazBaze(){
         try {
             connection = DriverManager.getConnection(url, username, password);
             Statement statement = connection.createStatement();
@@ -39,33 +39,15 @@ public class JDBsql implements JDBsqlInterface{
         zamknijBaze(connection);
     }
 
-    private void zamknijBaze(Connection con){
+    @Override
+    public void zamknijBaze(Connection con){
         try {
             con.close();
         }catch(SQLException e) {
             System.out.println("Wyj 4 (zamknięcie bazy): " + e);
         }
     }
-    public cNapoj getProduktPoId(int id){
-        cNapoj nap = null;
-        Integer nr=null; String n; double c; int i;
-        try {
-            connection = DriverManager.getConnection(url, username, password);
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from napoje1 where id= "+id);
-            if(rs.next()) {
-                nr = rs.getInt(2);
-                n = rs.getString(3);
-                c = rs.getDouble(4);
-                i = rs.getInt(5);
-                nap = new cNapoj(nr,n,c,i);
-            }
-        }catch (SQLException e){
-            System.out.println("Wyj (getPpId) " +e);
-        }
-            zamknijBaze(connection);
-            return nap;
-    }
+
 
     public cNapoj[] przeniesienieZBazyDoTablicy(int l){
         cNapoj[] tabtym = new cNapoj[l];
@@ -92,20 +74,13 @@ public class JDBsql implements JDBsqlInterface{
         try {
             connection = DriverManager.getConnection(url, username, password);
             PreparedStatement prepStmt = connection.prepareStatement("Update napoje set ilosc WHERE id= ? ;");
-
-
             for(int i = 0; i<nap.length; i++){
-
-
-
-
-            }
+           }
         }catch (SQLException e){
             System.out.println("Wyj (przeniesienieDo): " + e);
         }
     }
     public void przeniesienieZTabDoBazy(cNapoj nap){
-
     }
 */
     public void zmienIlosc1(cNapoj nap){
@@ -117,6 +92,18 @@ public class JDBsql implements JDBsqlInterface{
             prepStmt.execute();
         }catch (SQLException e){
             System.out.println("Wyj (przeniesienieDo): " + e);
+        }
+        zamknijBaze(connection);
+    }
+    public void zmienNrNaLisicie1(cNapoj nap, int id){
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement prepStmt = connection.prepareStatement("Update napoje1 set nr_na_liście = ? WHERE id = ? ;");
+            prepStmt.setInt(1, nap.getNr_na_liscie());
+            prepStmt.setInt(2, id);
+            prepStmt.execute();
+        }catch (SQLException e){
+            System.out.println("Wyj (zmianaNR): " + e);
         }
         zamknijBaze(connection);
     }
@@ -141,10 +128,44 @@ public class JDBsql implements JDBsqlInterface{
             System.out.println("Wyj (usunięcieZ): " + e);
         }
         zamknijBaze(connection);
-
     }
 
-    //Zwraca null kiedy: nie można znaleźć obiektu po id; nr_na_liście jest null'em
+    public boolean dodajDoBazy(cNapoj nap){
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement prepStmt = connection.prepareStatement("Insert into napoje1 ( nr_na_liście, nazwa, cena, ilosc ) values ( null , ? , ? , ? ) ;");
+            prepStmt.setString(1, nap.getNazwa());
+            prepStmt.setDouble(2, nap.getCena());
+            prepStmt.setInt(3, nap.getIlosc());
+            prepStmt.execute();
+        }catch (SQLException e){
+            System.out.println("Wyj (DodanieDoBazy): " + e);
+            return false;
+        }
+        zamknijBaze(connection);
+        return true;
+    }
+
+    public cNapoj getProduktPoId(int id){
+        cNapoj nap = null;
+        Integer nr=null; String n; double c; int i;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("select * from napoje1 where id= "+id);
+            if(rs.next()) {
+                nr = rs.getInt(2);
+                n = rs.getString(3);
+                c = rs.getDouble(4);
+                i = rs.getInt(5);
+                nap = new cNapoj(nr,n,c,i);
+            }
+        }catch (SQLException e){
+            System.out.println("Wyj (getPpId) " +e);
+        }
+        zamknijBaze(connection);
+        return nap;
+    }
     public Integer getNrPoId(int id){
         Integer nr = null;
         try {

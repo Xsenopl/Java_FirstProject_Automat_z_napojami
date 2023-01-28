@@ -32,15 +32,15 @@ public interface iAutomatControllerInterface {
         }catch (Exception e) {
             System.out.println("Błąd w wyborze tak lub nie "+ e); return false;
         }
+        assert temp != null;
         return (temp.equals("y") || temp.equals("Y") || temp.equals("yes") || temp.equals("Yes"));
     }
     void start();
     void kupno();
-
-    void pokazListeProduktow();
     void edycja();
     void usunZAutomatu();
     void usunZBazy();
     void dodajNaListe();
+    void dodajDoBazy();
 
 }

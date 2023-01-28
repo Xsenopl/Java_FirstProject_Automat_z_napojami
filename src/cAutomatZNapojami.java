@@ -87,9 +87,20 @@ public class cAutomatZNapojami extends JDBsql
 
   */
     }
+    public void dodajNaListe1(cNapoj nap, int id){
+        napoje[nap.getNr_na_liscie()] = nap;
+        zmienNrNaLisicie1(nap,id);
+        zmienIlosc1(nap);
+    }
+    @Override
+    public boolean dodajDoBazy(cNapoj nap){
+       return super.dodajDoBazy(nap);
+    }
 
 
-
+    public void setNullNapojeNr(int nr) {
+        if (czyWIndexieTablicy(nr))
+            napoje[nr]=null;    }
     public cNapoj[] getNapoje() {return napoje; }
     public short getLarge()     {return large; }
     public short getDepth() {return depth; }
@@ -102,5 +113,6 @@ public class cAutomatZNapojami extends JDBsql
     public boolean czyWIndexieTablicy(int i) throws NullPointerException{
         return(0<=i && i<large);
     }
+
 
 }

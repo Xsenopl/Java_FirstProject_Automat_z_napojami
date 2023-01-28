@@ -46,6 +46,27 @@ public class JDBsql implements JDBsqlInterface{
             System.out.println("Wyj 4 (zamknięcie bazy): " + e);
         }
     }
+    public cNapoj getProduktPoId(int id){
+        cNapoj nap = null;
+        Integer nr=null; String n; double c; int i;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("select * from napoje1 where id= "+id);
+            if(rs.next()) {
+                nr = rs.getInt(2);
+                n = rs.getString(3);
+                c = rs.getDouble(4);
+                i = rs.getInt(5);
+                nap = new cNapoj(nr,n,c,i);
+            }
+        }catch (SQLException e){
+            System.out.println("Wyj (getPpId) " +e);
+        }
+            zamknijBaze(connection);
+            return nap;
+    }
+
     public cNapoj[] przeniesienieZBazyDoTablicy(int l){
         cNapoj[] tabtym = new cNapoj[l];
 

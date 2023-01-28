@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class cAutomatController implements iAutomatControllerInterface
@@ -24,7 +25,7 @@ public class cAutomatController implements iAutomatControllerInterface
             try {
                 decyzja = input.nextInt();
                 switch (decyzja) {
-                    case 0 -> { System.out.println("Odchodzisz od automatu."); System.exit(0); }
+                    case 0 -> { System.out.println("Odchodzisz od automatu."); input.close(); System.exit(0); }
                     case 1 -> { System.out.println("Wybrano 1 - Kupujesz.");  kupno();  }
                     case 2 -> { System.out.println("Wybrano 2 - Edytujesz." ); edycja();}
                     default -> System.out.println("\n\nŹle wybrano czynność liczba.");
@@ -91,7 +92,7 @@ public void kupno(){
                     case 0 -> { System.out.println("Log Out."); return; }
                     case 1 -> { System.out.println("Wybrano 1 - Usuwasz z automatu."); usunZAutomatu();  }
                     case 2 -> { System.out.println("Wybrano 2 - Usuwasz z bazy." ); usunZBazy(); }
-                    case 3 -> { System.out.println("Wybrano 3 - Dodajesz do automatu." ); }
+                    case 3 -> { System.out.println("Wybrano 3 - Dodajesz do automatu." ); dodajNaListe(); }
                     case 4 -> { System.out.println("Wybrano 4 - Dodajesz do bazy." ); }
                     default -> System.out.println("\n\nŹle wybrano czynność liczba.");
                 }
@@ -141,31 +142,101 @@ public void kupno(){
         System.out.println("Baza posiada produkty: ");
         automat.pokazBaze();
         System.out.println("Wybierz id produktu do usunięcia:");
-       // while
         try{
-         automat.usunZBazy(Integer.parseInt(reader.readLine()));
+            automat.usunZBazy(Integer.parseInt(reader.readLine()));
         }catch (IOException e){
             System.out.println("IOException błąd! " + e);
         }catch (NumberFormatException e){
             System.out.println("Anulowano wybieranie \n\n");
+        }//catch (NoSuchElementException e){}
+    }
+
+    public void dodajNaListe() {
+        System.out.println("Oto miejsca na liście automatu oraz ich zawartość");
+        automat.pokazTowar();
+        System.out.println("Wybierz miejsce, które chcesz edytować.");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        Integer decyzja = null;
+        try {
+            decyzja = Integer.parseInt(reader.readLine());
+            if (!automat.czyWIndexieTablicy(decyzja)) throw new BlednyZakresTablicy();
+        } catch (IOException e) {
+            System.out.println("IOException błąd! " + e + "\nAnulowano edycję miejsc.");
+            return;
+        } catch (BlednyZakresTablicy e) {
+            System.out.println("Błędny zakres tablicy. Anulowano edycję miejsc.");
+            return;
+        } catch (NumberFormatException e) {
+            System.out.println("Anulowano edycję miejsc \n\n");
+            return;
         }
+
+        int nr= decyzja;
+        if (automat.sprawdzMiejsceNULL(nr)) {
+            System.out.println("Miejsce " + nr + " posiada już produkt. Czy chcesz go najpierw usunąć z listy produktów?\ny / n\n");
+            if (takCzyNie()) {
+                automat.usunZListyA(nr);
+                dodajNaListe();
+            }
+        } else {
+            System.out.println("\n Wybrano miejsce "+nr+" do dodania towaru. Oto baza dostępnych produktów:");
+            automat.pokazBaze();
+            System.out.println("Wybierz produkt, który dodasz do asortymentu");
+
+            try {
+                decyzja = Integer.parseInt(reader.readLine());
+
+            }catch (IOException e) {
+                System.out.println("IOException błąd! " + e + "\nAnulowano edycję miejsc.");
+                return;
+            }catch (NumberFormatException e) {
+                System.out.println("Anulowano edycję miejsc \n\n");
+                return;
+            }
+            cNapoj n = automat.getProduktPoId(decyzja);
+            if(n==null){
+                System.out.println("Nie ma produktu o id = "+decyzja+"\n"); return;}
+            System.out.println("oto produkt: "+ n +"\n");
+            int id = decyzja;
+            System.out.println("Podaj liczbę umieszczonych sztuk produktów. Nie może być ich więcej niż"+automat.getDepth()+" sztuk.");
+            try {
+                decyzja = Integer.parseInt(reader.readLine());
+
+            }catch (IOException e) {
+                System.out.println("IOException błąd! " + e + "\nAnulowano edycję miejsc.");
+                return;
+            }catch (NumberFormatException e) {
+                System.out.println("Anulowano edycję miejsc \n\n");
+                return;
+            }
+            if(decyzja==null || decyzja<0) decyzja=0;
+            else if(decyzja>10) decyzja=(int)automat.getDepth();
+
+            // zmieniam obiekt tymczasowy (numer na liście oraz ilość
+            // zmieniam numer w bazie na podstawie id
+            // zmieniam ilość w bazie na podstawie numeru
+            // dodaję produkt do listy na podstawie numeru obiektu
+        }
+
     }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //klasa z obsługą błędu

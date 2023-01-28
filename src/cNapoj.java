@@ -4,7 +4,7 @@ public class cNapoj {
     private Integer nr_na_liscie;
     private double cena;
 
-    public cNapoj(int nr_na_liscie, String nazwa, double cena, int ilosc) {
+    public cNapoj(Integer nr_na_liscie, String nazwa, double cena, int ilosc) throws NullPointerException{
         this.nr_na_liscie = nr_na_liscie;
         this.nazwa = nazwa;
         this.cena = cena;

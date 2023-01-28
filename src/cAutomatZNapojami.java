@@ -4,7 +4,7 @@ public class cAutomatZNapojami extends JDBsql
 {
     private cNapoj[] napoje;
     private double money;
-    final private short large = 9;
+    final private short large = 9, depth =10;
     final private String password = "qwe123";
 
 
@@ -92,12 +92,15 @@ public class cAutomatZNapojami extends JDBsql
 
     public cNapoj[] getNapoje() {return napoje; }
     public short getLarge()     {return large; }
+    public short getDepth() {return depth; }
     public double getMoney()    {return money; }
+    @Override
+    public cNapoj getProduktPoId(int id){ return super.getProduktPoId(id); }
     public boolean sprawdzMiejsceNULL(int msc){ return napoje[msc] != null;}            //Zwraca true, jeśli miejsce nie jest puste
     public boolean sprawdzMiejsceZero(int msc){  return napoje[msc].getIlosc() != 0;}   //Zwraca true, jeśli miejsce posiada ilość != 0
     public boolean sprawdzHaslo(String h){return Objects.equals(h, password);}
     public boolean czyWIndexieTablicy(int i) throws NullPointerException{
         return(0<=i && i<large);
-
     }
+
 }

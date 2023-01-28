@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public interface iAutomatControllerInterface {
 
@@ -19,6 +22,18 @@ public interface iAutomatControllerInterface {
                 0 - Zakończ.
                 """);
     }
+    default boolean takCzyNie(){
+        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+        String temp = null;
+        try{
+            temp = r.readLine();
+        }catch (IOException e){
+            System.out.println("IOException błąd! " + e);
+        }catch (Exception e) {
+            System.out.println("Błąd w wyborze tak lub nie "+ e); return false;
+        }
+        return (temp.equals("y") || temp.equals("Y") || temp.equals("yes") || temp.equals("Yes"));
+    }
     void start();
     void kupno();
 
@@ -26,5 +41,6 @@ public interface iAutomatControllerInterface {
     void edycja();
     void usunZAutomatu();
     void usunZBazy();
+    void dodajNaListe();
 
 }

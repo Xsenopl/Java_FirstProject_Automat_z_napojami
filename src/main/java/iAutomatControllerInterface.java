@@ -20,7 +20,7 @@ public interface iAutomatControllerInterface {
                 3 - Dodaj napój do automatu.
                 4 - Dodaj napój do bazy.
                 8 - Eksportuj dane z bazy.
-                9 - Importuj dame do bazy.
+                9 - Importuj dane do bazy.
                 0 - Zakończ.
                 """);
     }

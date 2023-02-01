@@ -29,7 +29,16 @@ public class cAutomatZNapojami extends JDBsql
     public void pokazBaze(){super.pokazBaze(); }
 
     public void kupNapoj(int nr, double m){         //niedorobiona całkiem
-        double reszta = m - napoje[nr].getCena();
+        double reszta;
+        if(m>= napoje[nr].getCena())
+            reszta = m - napoje[nr].getCena();
+        else {
+            System.out.println("Kwota nie przekroczyła ceny produktu\n\n"); return;
+        }
+        long factor = (long) Math.pow(10, 2);
+        reszta = reszta * factor;
+        long tmp = Math.round(reszta);
+        reszta = (double) tmp / factor;
         System.out.println("Oto reszta: "+reszta+"zł.");
         napoje[nr].setIlosc(napoje[nr].getIlosc()-1);
         System.out.println("Dostajesz swój napój: "+ napoje[nr].getNazwa() +"\n\n");
@@ -73,6 +82,9 @@ public class cAutomatZNapojami extends JDBsql
     @Override
     public boolean dodajDoBazy(cNapoj nap){
        return super.dodajDoBazy(nap);
+    }
+    public void aktualizujTabeleNapoi(){
+        this.napoje = przeniesienieZBazyDoTablicy(large, depth);
     }
 
 

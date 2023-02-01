@@ -17,14 +17,14 @@ public class cAutomatController implements iAutomatControllerInterface
     public  void start()
     {
         Scanner input = new Scanner(System.in);
-        int decyzja;
+        int decyzja=1;
 
-        while (true) {
+        do{
             startMenu();
             try {
                 decyzja = input.nextInt();
                 switch (decyzja) {
-                    case 0 -> { System.out.println("Odchodzisz od automatu."); input.close(); System.exit(0); }
+                    case 0 -> { System.out.println("Odchodzisz od automatu."); input.close();} //System.exit(0); }
                     case 1 -> { System.out.println("Wybrano 1 - Kupujesz.");  kupno();  }
                     case 2 -> { System.out.println("Wybrano 2 - Edytujesz." ); edycja();}
                     default -> System.out.println("\n\nŹle wybrano czynność liczba.");
@@ -33,7 +33,8 @@ public class cAutomatController implements iAutomatControllerInterface
                 System.out.println("\n\nŹle wybrano czynność litera.");
                 input.next();
             }
-        }
+        }while (decyzja!=0);
+        input.close();
     }
 
 
@@ -282,6 +283,7 @@ public void kupno(){
             System.out.println("Błąd we wpisywaniu nazwy pliku");
         }
         cv.importFromFileCsvToDatabase(nazwa);
+        automat.aktualizujTabeleNapoi();
     }
 
 }
